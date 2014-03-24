@@ -68,14 +68,14 @@ $provide.value("$locale", {
     "GROUP_SEP": "\u066c",
     "PATTERNS": [
       {
-        "gSize": 0,
-        "lgSize": 0,
+        "gSize": 3,
+        "lgSize": 3,
         "macFrac": 0,
         "maxFrac": 3,
         "minFrac": 0,
         "minInt": 1,
-        "negPre": "",
-        "negSuf": "-",
+        "negPre": "-",
+        "negSuf": "",
         "posPre": "",
         "posSuf": ""
       },
@@ -86,9 +86,9 @@ $provide.value("$locale", {
         "maxFrac": 2,
         "minFrac": 2,
         "minInt": 1,
-        "negPre": "\u00a4\u00a0",
-        "negSuf": "-",
-        "posPre": "\u00a4\u00a0",
+        "negPre": "\u00a4-",
+        "negSuf": "",
+        "posPre": "\u00a4",
         "posSuf": ""
       }
     ]

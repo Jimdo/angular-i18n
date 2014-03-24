@@ -63,7 +63,7 @@ $provide.value("$locale", {
     "shortTime": "H:mm"
   },
   "NUMBER_FORMATS": {
-    "CURRENCY_SYM": "Rial",
+    "CURRENCY_SYM": "Af.",
     "DECIMAL_SEP": "\u066b",
     "GROUP_SEP": "\u066c",
     "PATTERNS": [
@@ -86,8 +86,8 @@ $provide.value("$locale", {
         "maxFrac": 2,
         "minFrac": 2,
         "minInt": 1,
-        "negPre": "\u200e(\u00a4",
-        "negSuf": ")",
+        "negPre": "\u200e\u00a4-",
+        "negSuf": "",
         "posPre": "\u200e\u00a4",
         "posSuf": ""
       }

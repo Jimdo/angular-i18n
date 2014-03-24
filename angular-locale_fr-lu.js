@@ -65,7 +65,7 @@ $provide.value("$locale", {
   "NUMBER_FORMATS": {
     "CURRENCY_SYM": "\u20ac",
     "DECIMAL_SEP": ",",
-    "GROUP_SEP": "\u00a0",
+    "GROUP_SEP": ".",
     "PATTERNS": [
       {
         "gSize": 3,
@@ -86,8 +86,8 @@ $provide.value("$locale", {
         "maxFrac": 2,
         "minFrac": 2,
         "minInt": 1,
-        "negPre": "(",
-        "negSuf": "\u00a0\u00a4)",
+        "negPre": "-",
+        "negSuf": "\u00a0\u00a4",
         "posPre": "",
         "posSuf": "\u00a0\u00a4"
       }
