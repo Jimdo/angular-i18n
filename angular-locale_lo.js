@@ -1,11 +1,42 @@
 'use strict';
 angular.module("ngLocale", [], ["$provide", function($provide) {
-var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
+var DECIMALS = function (n) {
+  var str = n + '';
+  var result = str.indexOf('.');
+  return (result == -1) ? 0 : str.length - result - 1;
+};
+var GET_WT = function (v, f) {
+  if (f === 0) {
+    return {w: 0, t: 0};
+  }
+
+  while ((f % 10) === 0) {
+    f /= 10;
+    v--;
+  }
+
+  return {w: v, t: f};
+};
+var GET_VF = function (n, opt_precision) {
+  var DEFAULT_DIGITS = 3;
+
+  if (undefined === opt_precision) {
+    var v = Math.min(DECIMALS(n), DEFAULT_DIGITS);
+  } else {
+    var v = opt_precision;
+  }
+
+  var base = Math.pow(10, v);
+  var f = ((n * base) | 0) % base;
+
+  return {v: v, f: f};
+};
+var PLURAL_CATEGORY = {"ZERO":"zero","ONE":"one","TWO":"two","FEW":"few","MANY":"many","OTHER":"other"};
 $provide.value("$locale", {
   "DATETIME_FORMATS": {
     "AMPMS": [
       "\u0e81\u0ec8\u0ead\u0e99\u0e97\u0ec8\u0ebd\u0e87",
-      "\u0eab\u0ea5\u0eb1\u0e87\u0e97\u0ec8\u0ebd\u0e87"
+      "\u0eab\u0ebc\u0eb1\u0e87\u0e97\u0ec8\u0ebd\u0e87"
     ],
     "DAY": [
       "\u0ea7\u0eb1\u0e99\u0ead\u0eb2\u0e97\u0eb4\u0e94",
@@ -31,19 +62,19 @@ $provide.value("$locale", {
       "\u0e97\u0eb1\u0e99\u0ea7\u0eb2"
     ],
     "SHORTDAY": [
-      "\u0ead\u0eb2.",
-      "\u0e88.",
-      "\u0ead.",
-      "\u0e9e.",
-      "\u0e9e\u0eab.",
-      "\u0eaa\u0e81.",
-      "\u0eaa."
+      "\u0ea7\u0eb1\u0e99\u0ead\u0eb2\u0e97\u0eb4\u0e94",
+      "\u0ea7\u0eb1\u0e99\u0e88\u0eb1\u0e99",
+      "\u0ea7\u0eb1\u0e99\u0ead\u0eb1\u0e87\u0e84\u0eb2\u0e99",
+      "\u0ea7\u0eb1\u0e99\u0e9e\u0eb8\u0e94",
+      "\u0ea7\u0eb1\u0e99\u0e9e\u0eb0\u0eab\u0eb1\u0e94",
+      "\u0ea7\u0eb1\u0e99\u0eaa\u0eb8\u0e81",
+      "\u0ea7\u0eb1\u0e99\u0ec0\u0eaa\u0ebb\u0eb2"
     ],
     "SHORTMONTH": [
       "\u0ea1.\u0e81.",
       "\u0e81.\u0e9e.",
-      "\u0ea1\u0eb5.\u0e99.",
-      "\u0ea1.\u0eaa..",
+      "\u0ea1.\u0e99.",
+      "\u0ea1.\u0eaa.",
       "\u0e9e.\u0e9e.",
       "\u0ea1\u0eb4.\u0e96.",
       "\u0e81.\u0ea5.",
@@ -53,13 +84,13 @@ $provide.value("$locale", {
       "\u0e9e.\u0e88.",
       "\u0e97.\u0ea7."
     ],
-    "fullDate": "EEEE\u0e97\u0eb5 d MMMM G y",
+    "fullDate": "EEEE \u0e97\u0eb5 d MMMM G y",
     "longDate": "d MMMM y",
     "medium": "d MMM y H:mm:ss",
     "mediumDate": "d MMM y",
     "mediumTime": "H:mm:ss",
-    "short": "d/M/yyyy H:mm",
-    "shortDate": "d/M/yyyy",
+    "short": "d/M/y H:mm",
+    "shortDate": "d/M/y",
     "shortTime": "H:mm"
   },
   "NUMBER_FORMATS": {
@@ -94,6 +125,6 @@ $provide.value("$locale", {
     ]
   },
   "id": "lo",
-  "pluralCat": function (n) {  if (n == 1) {   return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
+  "pluralCat": function (n, opt_precision) {  var i = n | 0;  var vf = GET_VF(n, opt_precision);  if (i == 1 && vf.v == 0) {    return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
 });
 }]);

@@ -1,6 +1,37 @@
 'use strict';
 angular.module("ngLocale", [], ["$provide", function($provide) {
-var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
+var DECIMALS = function (n) {
+  var str = n + '';
+  var result = str.indexOf('.');
+  return (result == -1) ? 0 : str.length - result - 1;
+};
+var GET_WT = function (v, f) {
+  if (f === 0) {
+    return {w: 0, t: 0};
+  }
+
+  while ((f % 10) === 0) {
+    f /= 10;
+    v--;
+  }
+
+  return {w: v, t: f};
+};
+var GET_VF = function (n, opt_precision) {
+  var DEFAULT_DIGITS = 3;
+
+  if (undefined === opt_precision) {
+    var v = Math.min(DECIMALS(n), DEFAULT_DIGITS);
+  } else {
+    var v = opt_precision;
+  }
+
+  var base = Math.pow(10, v);
+  var f = ((n * base) | 0) % base;
+
+  return {v: v, f: f};
+};
+var PLURAL_CATEGORY = {"ZERO":"zero","ONE":"one","TWO":"two","FEW":"few","MANY":"many","OTHER":"other"};
 $provide.value("$locale", {
   "DATETIME_FORMATS": {
     "AMPMS": [
@@ -8,27 +39,27 @@ $provide.value("$locale", {
       "CH"
     ],
     "DAY": [
-      "Ch\u1ee7 nh\u1eadt",
-      "Th\u1ee9 hai",
-      "Th\u1ee9 ba",
-      "Th\u1ee9 t\u01b0",
-      "Th\u1ee9 n\u0103m",
-      "Th\u1ee9 s\u00e1u",
-      "Th\u1ee9 b\u1ea3y"
+      "Ch\u1ee7 Nh\u1eadt",
+      "Th\u1ee9 Hai",
+      "Th\u1ee9 Ba",
+      "Th\u1ee9 T\u01b0",
+      "Th\u1ee9 N\u0103m",
+      "Th\u1ee9 S\u00e1u",
+      "Th\u1ee9 B\u1ea3y"
     ],
     "MONTH": [
-      "th\u00e1ng m\u1ed9t",
-      "th\u00e1ng hai",
-      "th\u00e1ng ba",
-      "th\u00e1ng t\u01b0",
-      "th\u00e1ng n\u0103m",
-      "th\u00e1ng s\u00e1u",
-      "th\u00e1ng b\u1ea3y",
-      "th\u00e1ng t\u00e1m",
-      "th\u00e1ng ch\u00edn",
-      "th\u00e1ng m\u01b0\u1eddi",
-      "th\u00e1ng m\u01b0\u1eddi m\u1ed9t",
-      "th\u00e1ng m\u01b0\u1eddi hai"
+      "th\u00e1ng 1",
+      "th\u00e1ng 2",
+      "th\u00e1ng 3",
+      "th\u00e1ng 4",
+      "th\u00e1ng 5",
+      "th\u00e1ng 6",
+      "th\u00e1ng 7",
+      "th\u00e1ng 8",
+      "th\u00e1ng 9",
+      "th\u00e1ng 10",
+      "th\u00e1ng 11",
+      "th\u00e1ng 12"
     ],
     "SHORTDAY": [
       "CN",
@@ -54,12 +85,12 @@ $provide.value("$locale", {
       "thg 12"
     ],
     "fullDate": "EEEE, 'ng\u00e0y' dd MMMM 'n\u0103m' y",
-    "longDate": "'Ng\u00e0y' dd 'th\u00e1ng' M 'n\u0103m' y",
-    "medium": "dd-MM-yyyy HH:mm:ss",
-    "mediumDate": "dd-MM-yyyy",
+    "longDate": "'Ng\u00e0y' dd 'th\u00e1ng' MM 'n\u0103m' y",
+    "medium": "dd-MM-y HH:mm:ss",
+    "mediumDate": "dd-MM-y",
     "mediumTime": "HH:mm:ss",
-    "short": "dd/MM/yyyy HH:mm",
-    "shortDate": "dd/MM/yyyy",
+    "short": "dd/MM/y HH:mm",
+    "shortDate": "dd/MM/y",
     "shortTime": "HH:mm"
   },
   "NUMBER_FORMATS": {
@@ -94,6 +125,6 @@ $provide.value("$locale", {
     ]
   },
   "id": "vi-vn",
-  "pluralCat": function (n) {  return PLURAL_CATEGORY.OTHER;}
+  "pluralCat": function (n, opt_precision) {  return PLURAL_CATEGORY.OTHER;}
 });
 }]);

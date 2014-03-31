@@ -1,65 +1,96 @@
 'use strict';
 angular.module("ngLocale", [], ["$provide", function($provide) {
-var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
+var DECIMALS = function (n) {
+  var str = n + '';
+  var result = str.indexOf('.');
+  return (result == -1) ? 0 : str.length - result - 1;
+};
+var GET_WT = function (v, f) {
+  if (f === 0) {
+    return {w: 0, t: 0};
+  }
+
+  while ((f % 10) === 0) {
+    f /= 10;
+    v--;
+  }
+
+  return {w: v, t: f};
+};
+var GET_VF = function (n, opt_precision) {
+  var DEFAULT_DIGITS = 3;
+
+  if (undefined === opt_precision) {
+    var v = Math.min(DECIMALS(n), DEFAULT_DIGITS);
+  } else {
+    var v = opt_precision;
+  }
+
+  var base = Math.pow(10, v);
+  var f = ((n * base) | 0) % base;
+
+  return {v: v, f: f};
+};
+var PLURAL_CATEGORY = {"ZERO":"zero","ONE":"one","TWO":"two","FEW":"few","MANY":"many","OTHER":"other"};
 $provide.value("$locale", {
   "DATETIME_FORMATS": {
     "AMPMS": [
-      "\u00c0\u00e1r\u1ecd\u0300",
-      "\u1ecc\u0300s\u00e1n"
+      "\u00c0\u00e1r\u0254\u0300",
+      "\u0186\u0300s\u00e1n"
     ],
     "DAY": [
-      "\u1eccj\u1ecd\u0301 \u00c0\u00eck\u00fa",
-      "\u1eccj\u1ecd\u0301 Aj\u00e9",
-      "\u1eccj\u1ecd\u0301 \u00ccs\u1eb9\u0301gun",
-      "\u1eccj\u1ecd\u0301r\u00fa",
-      "\u1eccj\u1ecd\u0301b\u1ecd",
-      "\u1eccj\u1ecd\u0301 \u1eb8t\u00ec",
-      "\u1eccj\u1ecd\u0301 \u00c0b\u00e1m\u1eb9\u0301ta"
+      "\u0186j\u0254\u0301 \u00c0\u00eck\u00fa",
+      "\u0186j\u0254\u0301 Aj\u00e9",
+      "\u0186j\u0254\u0301 \u00ccs\u025b\u0301gun",
+      "\u0186j\u0254\u0301r\u00fa",
+      "\u0186j\u0254\u0301b\u0254",
+      "\u0186j\u0254\u0301 \u0190t\u00ec",
+      "\u0186j\u0254\u0301 \u00c0b\u00e1m\u025b\u0301ta"
     ],
     "MONTH": [
-      "O\u1e63\u00f9 \u1e62\u1eb9\u0301r\u1eb9\u0301",
-      "O\u1e63\u00f9 \u00c8r\u00e8l\u00e8",
-      "O\u1e63\u00f9 \u1eb8r\u1eb9\u0300n\u00e0",
-      "O\u1e63\u00f9 \u00ccgb\u00e9",
-      "O\u1e63\u00f9 \u1eb8\u0300bibi",
-      "O\u1e63\u00f9 \u00d2k\u00fadu",
-      "O\u1e63\u00f9 Ag\u1eb9m\u1ecd",
-      "O\u1e63\u00f9 \u00d2g\u00fan",
-      "O\u1e63\u00f9 Owewe",
-      "O\u1e63\u00f9 \u1ecc\u0300w\u00e0r\u00e0",
-      "O\u1e63\u00f9 B\u00e9l\u00fa",
-      "O\u1e63\u00f9 \u1ecc\u0300p\u1eb9\u0300"
+      "Osh\u00f9 Sh\u025b\u0301r\u025b\u0301",
+      "Osh\u00f9 \u00c8r\u00e8l\u00e8",
+      "Osh\u00f9 \u0190r\u025b\u0300n\u00e0",
+      "Osh\u00f9 \u00ccgb\u00e9",
+      "Osh\u00f9 \u0190\u0300bibi",
+      "Osh\u00f9 \u00d2k\u00fadu",
+      "Osh\u00f9 Ag\u025bm\u0254",
+      "Osh\u00f9 \u00d2g\u00fan",
+      "Osh\u00f9 Owewe",
+      "Osh\u00f9 \u0186\u0300w\u00e0r\u00e0",
+      "Osh\u00f9 B\u00e9l\u00fa",
+      "Osh\u00f9 \u0186\u0300p\u025b\u0300"
     ],
     "SHORTDAY": [
       "\u00c0\u00eck\u00fa",
       "Aj\u00e9",
-      "\u00ccs\u1eb9\u0301gun",
-      "\u1eccj\u1ecd\u0301r\u00fa",
-      "\u1eccj\u1ecd\u0301b\u1ecd",
-      "\u1eb8t\u00ec",
-      "\u00c0b\u00e1m\u1eb9\u0301ta"
+      "\u00ccs\u025b\u0301gun",
+      "\u0186j\u0254\u0301r\u00fa",
+      "\u0186j\u0254\u0301b\u0254",
+      "\u0190t\u00ec",
+      "\u00c0b\u00e1m\u025b\u0301ta"
     ],
     "SHORTMONTH": [
-      "\u1e62\u1eb9\u0301r\u1eb9\u0301",
+      "Sh\u025b\u0301r\u025b\u0301",
       "\u00c8r\u00e8l\u00e8",
-      "\u1eb8r\u1eb9\u0300n\u00e0",
+      "\u0190r\u025b\u0300n\u00e0",
       "\u00ccgb\u00e9",
-      "\u1eb8\u0300bibi",
+      "\u0190\u0300bibi",
       "\u00d2k\u00fadu",
-      "Ag\u1eb9m\u1ecd",
+      "Ag\u025bm\u0254",
       "\u00d2g\u00fan",
       "Owewe",
-      "\u1ecc\u0300w\u00e0r\u00e0",
+      "\u0186\u0300w\u00e0r\u00e0",
       "B\u00e9l\u00fa",
-      "\u1ecc\u0300p\u1eb9\u0300"
+      "\u0186\u0300p\u025b\u0300"
     ],
     "fullDate": "EEEE, d MMMM y",
     "longDate": "d MMMM y",
     "medium": "d MMM y h:mm:ss a",
     "mediumDate": "d MMM y",
     "mediumTime": "h:mm:ss a",
-    "short": "dd/MM/yyyy h:mm a",
-    "shortDate": "dd/MM/yyyy",
+    "short": "dd/MM/y h:mm a",
+    "shortDate": "dd/MM/y",
     "shortTime": "h:mm a"
   },
   "NUMBER_FORMATS": {
@@ -94,6 +125,6 @@ $provide.value("$locale", {
     ]
   },
   "id": "yo-bj",
-  "pluralCat": function (n) {  if (n == 1) {   return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
+  "pluralCat": function (n, opt_precision) {  var i = n | 0;  var vf = GET_VF(n, opt_precision);  if (i == 1 && vf.v == 0) {    return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
 });
 }]);

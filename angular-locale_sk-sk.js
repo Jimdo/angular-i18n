@@ -1,11 +1,42 @@
 'use strict';
 angular.module("ngLocale", [], ["$provide", function($provide) {
-var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
+var DECIMALS = function (n) {
+  var str = n + '';
+  var result = str.indexOf('.');
+  return (result == -1) ? 0 : str.length - result - 1;
+};
+var GET_WT = function (v, f) {
+  if (f === 0) {
+    return {w: 0, t: 0};
+  }
+
+  while ((f % 10) === 0) {
+    f /= 10;
+    v--;
+  }
+
+  return {w: v, t: f};
+};
+var GET_VF = function (n, opt_precision) {
+  var DEFAULT_DIGITS = 3;
+
+  if (undefined === opt_precision) {
+    var v = Math.min(DECIMALS(n), DEFAULT_DIGITS);
+  } else {
+    var v = opt_precision;
+  }
+
+  var base = Math.pow(10, v);
+  var f = ((n * base) | 0) % base;
+
+  return {v: v, f: f};
+};
+var PLURAL_CATEGORY = {"ZERO":"zero","ONE":"one","TWO":"two","FEW":"few","MANY":"many","OTHER":"other"};
 $provide.value("$locale", {
   "DATETIME_FORMATS": {
     "AMPMS": [
-      "dopoludnia",
-      "popoludn\u00ed"
+      "AM",
+      "PM"
     ],
     "DAY": [
       "nede\u013ea",
@@ -55,11 +86,11 @@ $provide.value("$locale", {
     ],
     "fullDate": "EEEE, d. MMMM y",
     "longDate": "d. MMMM y",
-    "medium": "d.M.yyyy H:mm:ss",
-    "mediumDate": "d.M.yyyy",
+    "medium": "d.M.y H:mm:ss",
+    "mediumDate": "d.M.y",
     "mediumTime": "H:mm:ss",
-    "short": "d.M.yyyy H:mm",
-    "shortDate": "d.M.yyyy",
+    "short": "d.M.y H:mm",
+    "shortDate": "d.M.y",
     "shortTime": "H:mm"
   },
   "NUMBER_FORMATS": {
@@ -94,6 +125,6 @@ $provide.value("$locale", {
     ]
   },
   "id": "sk-sk",
-  "pluralCat": function (n) {  if (n == 1) {   return PLURAL_CATEGORY.ONE;  }  if (n == (n | 0) && n >= 2 && n <= 4) {   return PLURAL_CATEGORY.FEW;  }  return PLURAL_CATEGORY.OTHER;}
+  "pluralCat": function (n, opt_precision) {  var i = n | 0;  var vf = GET_VF(n, opt_precision);  if (i == 1 && vf.v == 0) {    return PLURAL_CATEGORY.ONE;  }  if (i >= 2 && i <= 4 && vf.v == 0) {    return PLURAL_CATEGORY.FEW;  }  if (vf.v != 0) {    return PLURAL_CATEGORY.MANY;  }  return PLURAL_CATEGORY.OTHER;}
 });
 }]);

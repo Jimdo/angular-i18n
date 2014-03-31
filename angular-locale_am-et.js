@@ -1,11 +1,42 @@
 'use strict';
 angular.module("ngLocale", [], ["$provide", function($provide) {
-var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
+var DECIMALS = function (n) {
+  var str = n + '';
+  var result = str.indexOf('.');
+  return (result == -1) ? 0 : str.length - result - 1;
+};
+var GET_WT = function (v, f) {
+  if (f === 0) {
+    return {w: 0, t: 0};
+  }
+
+  while ((f % 10) === 0) {
+    f /= 10;
+    v--;
+  }
+
+  return {w: v, t: f};
+};
+var GET_VF = function (n, opt_precision) {
+  var DEFAULT_DIGITS = 3;
+
+  if (undefined === opt_precision) {
+    var v = Math.min(DECIMALS(n), DEFAULT_DIGITS);
+  } else {
+    var v = opt_precision;
+  }
+
+  var base = Math.pow(10, v);
+  var f = ((n * base) | 0) % base;
+
+  return {v: v, f: f};
+};
+var PLURAL_CATEGORY = {"ZERO":"zero","ONE":"one","TWO":"two","FEW":"few","MANY":"many","OTHER":"other"};
 $provide.value("$locale", {
   "DATETIME_FORMATS": {
     "AMPMS": [
-      "\u1321\u12cb\u1275",
-      "\u12a8\u1233\u12d3\u1275"
+      "\u1325\u12cb\u1275",
+      "\u12a8\u1230\u12d3\u1275"
     ],
     "DAY": [
       "\u12a5\u1211\u12f5",
@@ -20,7 +51,7 @@ $provide.value("$locale", {
       "\u1303\u1295\u12e9\u12c8\u122a",
       "\u134c\u1265\u1229\u12c8\u122a",
       "\u121b\u122d\u127d",
-      "\u12a4\u1355\u1228\u120d",
+      "\u12a4\u1355\u122a\u120d",
       "\u121c\u12ed",
       "\u1301\u1295",
       "\u1301\u120b\u12ed",
@@ -43,7 +74,7 @@ $provide.value("$locale", {
       "\u1303\u1295\u12e9",
       "\u134c\u1265\u1229",
       "\u121b\u122d\u127d",
-      "\u12a4\u1355\u1228",
+      "\u12a4\u1355\u122a",
       "\u121c\u12ed",
       "\u1301\u1295",
       "\u1301\u120b\u12ed",
@@ -58,8 +89,8 @@ $provide.value("$locale", {
     "medium": "d MMM y h:mm:ss a",
     "mediumDate": "d MMM y",
     "mediumTime": "h:mm:ss a",
-    "short": "dd/MM/yyyy h:mm a",
-    "shortDate": "dd/MM/yyyy",
+    "short": "dd/MM/y h:mm a",
+    "shortDate": "dd/MM/y",
     "shortTime": "h:mm a"
   },
   "NUMBER_FORMATS": {
@@ -86,14 +117,14 @@ $provide.value("$locale", {
         "maxFrac": 2,
         "minFrac": 2,
         "minInt": 1,
-        "negPre": "(\u00a4",
-        "negSuf": ")",
+        "negPre": "\u00a4-",
+        "negSuf": "",
         "posPre": "\u00a4",
         "posSuf": ""
       }
     ]
   },
   "id": "am-et",
-  "pluralCat": function (n) {  if (n == 0 || n == 1) {   return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
+  "pluralCat": function (n, opt_precision) {  var i = n | 0;  if (i == 0 || n == 1) {    return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
 });
 }]);

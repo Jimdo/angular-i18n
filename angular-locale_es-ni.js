@@ -1,11 +1,42 @@
 'use strict';
 angular.module("ngLocale", [], ["$provide", function($provide) {
-var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
+var DECIMALS = function (n) {
+  var str = n + '';
+  var result = str.indexOf('.');
+  return (result == -1) ? 0 : str.length - result - 1;
+};
+var GET_WT = function (v, f) {
+  if (f === 0) {
+    return {w: 0, t: 0};
+  }
+
+  while ((f % 10) === 0) {
+    f /= 10;
+    v--;
+  }
+
+  return {w: v, t: f};
+};
+var GET_VF = function (n, opt_precision) {
+  var DEFAULT_DIGITS = 3;
+
+  if (undefined === opt_precision) {
+    var v = Math.min(DECIMALS(n), DEFAULT_DIGITS);
+  } else {
+    var v = opt_precision;
+  }
+
+  var base = Math.pow(10, v);
+  var f = ((n * base) | 0) % base;
+
+  return {v: v, f: f};
+};
+var PLURAL_CATEGORY = {"ZERO":"zero","ONE":"one","TWO":"two","FEW":"few","MANY":"many","OTHER":"other"};
 $provide.value("$locale", {
   "DATETIME_FORMATS": {
     "AMPMS": [
-      "a.m.",
-      "p.m."
+      "a. m.",
+      "p. m."
     ],
     "DAY": [
       "domingo",
@@ -31,36 +62,36 @@ $provide.value("$locale", {
       "diciembre"
     ],
     "SHORTDAY": [
-      "dom",
-      "lun",
-      "mar",
-      "mi\u00e9",
-      "jue",
-      "vie",
-      "s\u00e1b"
+      "dom.",
+      "lun.",
+      "mar.",
+      "mi\u00e9.",
+      "jue.",
+      "vie.",
+      "s\u00e1b."
     ],
     "SHORTMONTH": [
-      "ene",
-      "feb",
-      "mar",
-      "abr",
-      "may",
-      "jun",
-      "jul",
-      "ago",
-      "sep",
-      "oct",
-      "nov",
-      "dic"
+      "ene.",
+      "feb.",
+      "mar.",
+      "abr.",
+      "may.",
+      "jun.",
+      "jul.",
+      "ago.",
+      "sept.",
+      "oct.",
+      "nov.",
+      "dic."
     ],
     "fullDate": "EEEE, d 'de' MMMM 'de' y",
     "longDate": "d 'de' MMMM 'de' y",
-    "medium": "dd/MM/yyyy HH:mm:ss",
-    "mediumDate": "dd/MM/yyyy",
-    "mediumTime": "HH:mm:ss",
-    "short": "dd/MM/yy HH:mm",
-    "shortDate": "dd/MM/yy",
-    "shortTime": "HH:mm"
+    "medium": "d/M/y H:mm:ss",
+    "mediumDate": "d/M/y",
+    "mediumTime": "H:mm:ss",
+    "short": "d/M/yy H:mm",
+    "shortDate": "d/M/yy",
+    "shortTime": "H:mm"
   },
   "NUMBER_FORMATS": {
     "CURRENCY_SYM": "C$",
@@ -94,6 +125,6 @@ $provide.value("$locale", {
     ]
   },
   "id": "es-ni",
-  "pluralCat": function (n) {  if (n == 1) {   return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
+  "pluralCat": function (n, opt_precision) {  if (n == 1) {    return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
 });
 }]);

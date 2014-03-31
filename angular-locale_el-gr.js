@@ -1,6 +1,37 @@
 'use strict';
 angular.module("ngLocale", [], ["$provide", function($provide) {
-var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
+var DECIMALS = function (n) {
+  var str = n + '';
+  var result = str.indexOf('.');
+  return (result == -1) ? 0 : str.length - result - 1;
+};
+var GET_WT = function (v, f) {
+  if (f === 0) {
+    return {w: 0, t: 0};
+  }
+
+  while ((f % 10) === 0) {
+    f /= 10;
+    v--;
+  }
+
+  return {w: v, t: f};
+};
+var GET_VF = function (n, opt_precision) {
+  var DEFAULT_DIGITS = 3;
+
+  if (undefined === opt_precision) {
+    var v = Math.min(DECIMALS(n), DEFAULT_DIGITS);
+  } else {
+    var v = opt_precision;
+  }
+
+  var base = Math.pow(10, v);
+  var f = ((n * base) | 0) % base;
+
+  return {v: v, f: f};
+};
+var PLURAL_CATEGORY = {"ZERO":"zero","ONE":"one","TWO":"two","FEW":"few","MANY":"many","OTHER":"other"};
 $provide.value("$locale", {
   "DATETIME_FORMATS": {
     "AMPMS": [
@@ -33,18 +64,18 @@ $provide.value("$locale", {
     "SHORTDAY": [
       "\u039a\u03c5\u03c1",
       "\u0394\u03b5\u03c5",
-      "\u03a4\u03c1\u03b9",
+      "\u03a4\u03c1\u03af",
       "\u03a4\u03b5\u03c4",
-      "\u03a0\u03b5\u03bc",
+      "\u03a0\u03ad\u03bc",
       "\u03a0\u03b1\u03c1",
-      "\u03a3\u03b1\u03b2"
+      "\u03a3\u03ac\u03b2"
     ],
     "SHORTMONTH": [
       "\u0399\u03b1\u03bd",
       "\u03a6\u03b5\u03b2",
       "\u039c\u03b1\u03c1",
       "\u0391\u03c0\u03c1",
-      "\u039c\u03b1\u03ca",
+      "\u039c\u03b1\u0390",
       "\u0399\u03bf\u03c5\u03bd",
       "\u0399\u03bf\u03c5\u03bb",
       "\u0391\u03c5\u03b3",
@@ -94,6 +125,6 @@ $provide.value("$locale", {
     ]
   },
   "id": "el-gr",
-  "pluralCat": function (n) {  if (n == 1) {   return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
+  "pluralCat": function (n, opt_precision) {  if (n == 1) {    return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
 });
 }]);

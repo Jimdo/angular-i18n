@@ -1,18 +1,49 @@
 'use strict';
 angular.module("ngLocale", [], ["$provide", function($provide) {
-var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
+var DECIMALS = function (n) {
+  var str = n + '';
+  var result = str.indexOf('.');
+  return (result == -1) ? 0 : str.length - result - 1;
+};
+var GET_WT = function (v, f) {
+  if (f === 0) {
+    return {w: 0, t: 0};
+  }
+
+  while ((f % 10) === 0) {
+    f /= 10;
+    v--;
+  }
+
+  return {w: v, t: f};
+};
+var GET_VF = function (n, opt_precision) {
+  var DEFAULT_DIGITS = 3;
+
+  if (undefined === opt_precision) {
+    var v = Math.min(DECIMALS(n), DEFAULT_DIGITS);
+  } else {
+    var v = opt_precision;
+  }
+
+  var base = Math.pow(10, v);
+  var f = ((n * base) | 0) % base;
+
+  return {v: v, f: f};
+};
+var PLURAL_CATEGORY = {"ZERO":"zero","ONE":"one","TWO":"two","FEW":"few","MANY":"many","OTHER":"other"};
 $provide.value("$locale", {
   "DATETIME_FORMATS": {
     "AMPMS": [
       "k\u00edk\u00edr\u00edg",
-      "ng\u01ddg\u00f3g\u01ddle"
+      "ng\u0259g\u00f3g\u0259le"
     ],
     "DAY": [
       "s\u0254\u0301nd\u0254",
       "m\u0254\u0301ndi",
-      "s\u0254\u0301nd\u0254 m\u01ddl\u00fa m\u01dd\u0301b\u025b\u030c",
-      "s\u0254\u0301nd\u0254 m\u01ddl\u00fa m\u01dd\u0301l\u025b\u0301",
-      "s\u0254\u0301nd\u0254 m\u01ddl\u00fa m\u01dd\u0301nyi",
+      "s\u0254\u0301nd\u0254 m\u0259l\u00fa m\u0259\u0301b\u025b\u030c",
+      "s\u0254\u0301nd\u0254 m\u0259l\u00fa m\u0259\u0301l\u025b\u0301",
+      "s\u0254\u0301nd\u0254 m\u0259l\u00fa m\u0259\u0301nyi",
       "f\u00falad\u00e9",
       "s\u00e9rad\u00e9"
     ],
@@ -22,7 +53,7 @@ $provide.value("$locale", {
       "ng\u0254n l\u00e1la",
       "ng\u0254n nyina",
       "ng\u0254n t\u00e1na",
-      "ng\u0254n sam\u01ddna",
+      "ng\u0254n sam\u0259na",
       "ng\u0254n zamgb\u00e1la",
       "ng\u0254n mwom",
       "ng\u0254n ebul\u00fa",
@@ -58,8 +89,8 @@ $provide.value("$locale", {
     "medium": "d MMM y HH:mm:ss",
     "mediumDate": "d MMM y",
     "mediumTime": "HH:mm:ss",
-    "short": "d/M/yyyy HH:mm",
-    "shortDate": "d/M/yyyy",
+    "short": "d/M/y HH:mm",
+    "shortDate": "d/M/y",
     "shortTime": "HH:mm"
   },
   "NUMBER_FORMATS": {
@@ -94,6 +125,6 @@ $provide.value("$locale", {
     ]
   },
   "id": "ewo",
-  "pluralCat": function (n) {  if (n == 1) {   return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
+  "pluralCat": function (n, opt_precision) {  var i = n | 0;  var vf = GET_VF(n, opt_precision);  if (i == 1 && vf.v == 0) {    return PLURAL_CATEGORY.ONE;  }  return PLURAL_CATEGORY.OTHER;}
 });
 }]);
